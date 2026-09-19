@@ -1,1 +1,3 @@
 
+experiment_id,date,owner,status,model,train_domain,validation_domain,test_domain,image_size,batch_size,optimizer,learning_rate,epochs,seed,augmentation,checkpoint_path,accuracy,macro_f1,precision,recall,auroc,auprc,notes
+E001,,Wondu,planned,CustomCNN,Mixed,Mixed,Mixed,224,16,Adam,0.001,,,Standard,None,,,,,,,Initial mixed-domain baseline
