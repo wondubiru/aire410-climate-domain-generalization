@@ -216,3 +216,99 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# =========================
+# Virtual environments
+# =========================
+.venv/
+venv/
+env/
+ENV/
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# IDE / OS
+# =========================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# =========================
+# Secrets / environment files
+# =========================
+.env
+.env.*
+*.key
+*.pem
+secrets/
+credentials/
+
+# =========================
+# Raw / large datasets
+# =========================
+data/raw/
+data/external/
+data/downloads/
+datasets/
+
+# Keep lightweight metadata/splits allowed
+!data/.gitkeep
+!data/**/*.csv
+!data/**/*.json
+!data/**/*.yaml
+!data/**/*.yml
+!data/**/*.md
+!data/**/*.txt
+
+# =========================
+# Trained models / checkpoints
+# =========================
+*.keras
+*.h5
+*.hdf5
+*.ckpt
+*.weights
+checkpoints/
+models_trained/
+
+# =========================
+# TensorFlow / training artifacts
+# =========================
+logs/
+tensorboard/
+wandb/
+
+# =========================
+# Large experiment outputs
+# =========================
+results/raw/
+experiments/*/checkpoints/
+experiments/*/artifacts/
+
+# =========================
+# Temporary files
+# =========================
+tmp/
+temp/
+*.tmp
+*.log
+
+# =========================
+# Colab / local cache
+# =========================
+.cache/
