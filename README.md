@@ -10,7 +10,7 @@ Research project for **AIRE410 / AIN410 Deep Learning**.
 
 - Wondu
 - Mohammed
-- Member 3
+
 
 ## Official Course Problem
 
