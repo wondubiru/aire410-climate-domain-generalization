@@ -1,0 +1,9 @@
+source_dataset,broad_domain,strict_domain,confidence,usable_for_strict_cross_domain,evidence_note
+FDL_UAV_Flooded_Areas,UAV,UAV,high,yes,Dataset explicitly identified as FDL_UAV and contains Hurricane Harvey aerial imagery
+Louisiana_Flood_2016,Airborne_Aerial,AIRBORNE_UNKNOWN_PLATFORM,medium,no,Published source describes aerial imagery but UAV versus crewed-aircraft platform is not established from the compiled dataset
+Cyclone_Wildfire_Flood_Earthquake,Web_Sourced_Mixed,UNKNOWN,high,no,Images were collected from Google searches and have heterogeneous provenance
+Satellite_Image_Classification,Remote_Sensing_Mixed,REMOTE_SENSING_MIXED,high,no,Dataset combines sensor imagery with Google Maps snapshots
+Disasters_Dataset,Aggregated_Mixed,UNKNOWN,high,no,Dataset combines multiple disaster datasets with heterogeneous original sources
+Aerial_Landscape_Images,Google_Earth_Remote_Sensing,REMOTE_SENSING,high,no,Dataset is derived from AID and NWPU-RESISC45 remote-sensing imagery
+Aerial_Images_of_Cities,Google_Earth_Remote_Sensing,REMOTE_SENSING,high,no,Dataset is derived from AID and NWPU-RESISC45 remote-sensing imagery
+Forest_Aerial_Images,Satellite,Satellite,high,yes,Images originate from DeepGlobe land-cover satellite imagery
