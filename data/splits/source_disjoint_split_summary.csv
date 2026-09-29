@@ -1,0 +1,13 @@
+fold,split,total,Flooded,Desert,Neither
+SD1_FDL_AerialLandscape,train,4488,1892,969,1627
+SD1_FDL_AerialLandscape,validation,749,316,162,271
+SD1_FDL_AerialLandscape,test,1097,130,800,167
+SD2_Louisiana_SatelliteClassification,train,4235,1917,686,1632
+SD2_Louisiana_SatelliteClassification,validation,705,319,114,272
+SD2_Louisiana_SatelliteClassification,test,1394,102,1131,161
+SD3_Disasters_AerialLandscape,train,3346,724,969,1653
+SD3_Disasters_AerialLandscape,validation,558,121,162,275
+SD3_Disasters_AerialLandscape,test,2430,1493,800,137
+SD4_Cyclone_SatelliteClassification_Forest,train,3077,1478,686,913
+SD4_Cyclone_SatelliteClassification_Forest,validation,513,247,114,152
+SD4_Cyclone_SatelliteClassification_Forest,test,2744,613,1131,1000
