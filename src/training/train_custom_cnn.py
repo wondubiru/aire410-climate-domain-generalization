@@ -20,7 +20,11 @@ sys.path.insert(
     str(SRC_ROOT)
 )
 
-from data.tf_loader import load_mixed_datasets
+from data.tf_loader import (
+    load_mixed_datasets,
+    load_source_disjoint_fold,
+)
+
 from models.custom_cnn import build_custom_cnn
 
 
@@ -34,62 +38,118 @@ BATCH_SIZE = 16
 
 
 # ============================================================
+# SUPPORTED RESEARCH SPLITS
+# ============================================================
+
+SUPPORTED_SPLITS = {
+    "MIXED_RANDOM_V1",
+    "SD1_FDL_AerialLandscape",
+    "SD2_Louisiana_SatelliteClassification",
+    "SD3_Disasters_AerialLandscape",
+    "SD4_Cyclone_SatelliteClassification_Forest",
+}
+
+
+def load_experiment_split(split_name):
+    """
+    Load one of the frozen research splits.
+
+    MIXED_RANDOM_V1:
+        Conventional source-mixed baseline.
+
+    SD1-SD4:
+        Source-disjoint experimental folds.
+    """
+
+    if split_name not in SUPPORTED_SPLITS:
+        raise ValueError(
+            f"Unsupported split: {split_name}\n"
+            f"Supported splits: {sorted(SUPPORTED_SPLITS)}"
+        )
+
+    if split_name == "MIXED_RANDOM_V1":
+        return load_mixed_datasets()
+
+    return load_source_disjoint_fold(
+        split_name
+    )
+
+
+# ============================================================
 # MAIN
 # ============================================================
 
 def main(
     epochs,
-    run_name
+    run_name,
+    split_name
 ):
 
     print("=" * 75)
     print(run_name)
     print("=" * 75)
 
-    # --------------------------------------------------------
-    # Reproducibility
-    # --------------------------------------------------------
+    print(
+        f"\nDataset split: {split_name}"
+    )
 
-    keras.utils.set_random_seed(SEED)
+
+    # ========================================================
+    # REPRODUCIBILITY
+    # ========================================================
+
+    keras.utils.set_random_seed(
+        SEED
+    )
 
     try:
         tf.config.experimental.enable_op_determinism()
+
         print(
             "Deterministic TensorFlow operations enabled."
         )
+
     except Exception:
+
         print(
             "Deterministic operations could not be explicitly enabled."
         )
 
 
-    # --------------------------------------------------------
-    # Hardware information
-    # --------------------------------------------------------
+    # ========================================================
+    # HARDWARE INFORMATION
+    # ========================================================
 
-    gpus = tf.config.list_physical_devices("GPU")
+    gpus = tf.config.list_physical_devices(
+        "GPU"
+    )
 
     if gpus:
+
         compute_device = "GPU"
+
         print(
             f"GPU detected: {gpus}"
         )
+
     else:
+
         compute_device = "CPU"
+
         print(
             "No GPU detected. Training will use CPU."
         )
 
 
-    # --------------------------------------------------------
-    # Results directory
+    # ========================================================
+    # RESULTS DIRECTORY
     #
     # Local default:
     #   repo/results/
     #
-    # Colab example:
+    # Colab:
     #   /content/drive/MyDrive/AIRE410/results
-    # --------------------------------------------------------
+    # ========================================================
 
     results_root = Path(
         os.environ.get(
@@ -114,57 +174,67 @@ def main(
     )
 
 
-    # --------------------------------------------------------
-    # Load data
-    # --------------------------------------------------------
+    # ========================================================
+    # LOAD DATA
+    # ========================================================
 
     print(
-        "\nLoading MIXED_RANDOM_V1..."
+        f"\nLoading split: {split_name}"
     )
 
     train_ds, val_ds, _ = (
-        load_mixed_datasets()
+        load_experiment_split(
+            split_name
+        )
     )
 
 
-    # --------------------------------------------------------
-    # Build model
-    # --------------------------------------------------------
+    # ========================================================
+    # BUILD MODEL
+    # ========================================================
+
+    print(
+        "\nBuilding CustomCNN_V1..."
+    )
 
     model = build_custom_cnn()
 
 
-    # --------------------------------------------------------
-    # Compile
-    # --------------------------------------------------------
+    # ========================================================
+    # COMPILE
+    # ========================================================
 
     optimizer = keras.optimizers.Adam(
         learning_rate=LEARNING_RATE
     )
 
-    loss = keras.losses.SparseCategoricalCrossentropy()
+    loss = (
+        keras.losses
+        .SparseCategoricalCrossentropy()
+    )
 
     model.compile(
         optimizer=optimizer,
         loss=loss,
         metrics=[
-            keras.metrics.SparseCategoricalAccuracy(
+            keras.metrics
+            .SparseCategoricalAccuracy(
                 name="accuracy"
             )
         ]
     )
 
 
-    # --------------------------------------------------------
-    # Model summary
-    # --------------------------------------------------------
+    # ========================================================
+    # MODEL SUMMARY
+    # ========================================================
 
     model.summary()
 
 
-    # --------------------------------------------------------
-    # Callbacks
-    # --------------------------------------------------------
+    # ========================================================
+    # CALLBACKS
+    # ========================================================
 
     best_model_path = (
         output_dir
@@ -172,6 +242,10 @@ def main(
     )
 
     callbacks = [
+
+        # ----------------------------------------------------
+        # Save only the model with the lowest validation loss.
+        # ----------------------------------------------------
 
         keras.callbacks.ModelCheckpoint(
             filepath=str(
@@ -183,6 +257,10 @@ def main(
             verbose=1
         ),
 
+        # ----------------------------------------------------
+        # Stop when validation performance stops improving.
+        # ----------------------------------------------------
+
         keras.callbacks.EarlyStopping(
             monitor="val_loss",
             mode="min",
@@ -190,6 +268,10 @@ def main(
             restore_best_weights=True,
             verbose=1
         ),
+
+        # ----------------------------------------------------
+        # Lower learning rate when validation loss plateaus.
+        # ----------------------------------------------------
 
         keras.callbacks.ReduceLROnPlateau(
             monitor="val_loss",
@@ -200,6 +282,10 @@ def main(
             verbose=1
         ),
 
+        # ----------------------------------------------------
+        # Save epoch-by-epoch training results.
+        # ----------------------------------------------------
+
         keras.callbacks.CSVLogger(
             str(
                 output_dir
@@ -209,18 +295,20 @@ def main(
     ]
 
 
-    # --------------------------------------------------------
-    # Save experiment configuration BEFORE training
-    # --------------------------------------------------------
+    # ========================================================
+    # SAVE CONFIGURATION BEFORE TRAINING
+    # ========================================================
 
     configuration = {
 
-        "experiment": run_name,
+        "experiment":
+            run_name,
 
-        "seed": SEED,
+        "seed":
+            SEED,
 
         "dataset_split":
-            "MIXED_RANDOM_V1",
+            split_name,
 
         "model":
             "CustomCNN_V1",
@@ -297,9 +385,9 @@ def main(
         )
 
 
-    # --------------------------------------------------------
-    # Train
-    # --------------------------------------------------------
+    # ========================================================
+    # TRAIN
+    # ========================================================
 
     print(
         "\nStarting training..."
@@ -313,9 +401,9 @@ def main(
     )
 
 
-    # --------------------------------------------------------
-    # Save training history
-    # --------------------------------------------------------
+    # ========================================================
+    # SAVE TRAINING HISTORY
+    # ========================================================
 
     history_dict = {
         key: [
@@ -340,9 +428,9 @@ def main(
         )
 
 
-    # --------------------------------------------------------
-    # Load the BEST checkpoint explicitly
-    # --------------------------------------------------------
+    # ========================================================
+    # LOAD BEST CHECKPOINT EXPLICITLY
+    # ========================================================
 
     print(
         "\nLoading best saved checkpoint..."
@@ -353,12 +441,12 @@ def main(
     )
 
 
-    # --------------------------------------------------------
-    # Save final official model
+    # ========================================================
+    # SAVE OFFICIAL FINAL MODEL
     #
-    # This is intentionally the best-validation model,
-    # not simply the model from the last epoch.
-    # --------------------------------------------------------
+    # final_model.keras is deliberately the
+    # best-validation checkpoint, not the final epoch.
+    # ========================================================
 
     final_model_path = (
         output_dir
@@ -370,9 +458,9 @@ def main(
     )
 
 
-    # --------------------------------------------------------
-    # Final validation result
-    # --------------------------------------------------------
+    # ========================================================
+    # FINAL VALIDATION EVALUATION
+    # ========================================================
 
     print(
         "\nEvaluating BEST model "
@@ -387,11 +475,17 @@ def main(
     )
 
 
-    # --------------------------------------------------------
-    # Save validation metrics
-    # --------------------------------------------------------
+    # ========================================================
+    # SAVE VALIDATION METRICS
+    # ========================================================
 
     validation_metrics = {
+
+        "experiment":
+            run_name,
+
+        "dataset_split":
+            split_name,
 
         "validation_loss":
             float(val_loss),
@@ -417,12 +511,20 @@ def main(
         )
 
 
-    # --------------------------------------------------------
-    # Final report
-    # --------------------------------------------------------
+    # ========================================================
+    # FINAL REPORT
+    # ========================================================
 
     print(
         "\n" + "=" * 75
+    )
+
+    print(
+        f"Experiment: {run_name}"
+    )
+
+    print(
+        f"Split: {split_name}"
     )
 
     print(
@@ -460,23 +562,48 @@ def main(
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description=(
+            "Train CustomCNN_V1 on a frozen "
+            "AIRE410 research split."
+        )
+    )
 
     parser.add_argument(
         "--epochs",
         type=int,
-        default=30
+        default=30,
+        help="Maximum number of training epochs."
     )
 
     parser.add_argument(
         "--run-name",
         type=str,
-        default="E001_CustomCNN_Mixed"
+
+        # Default now points to E002.
+        default="E002_CustomCNN_SD1",
+
+        help="Experiment output folder name."
+    )
+
+    parser.add_argument(
+        "--split",
+        type=str,
+
+        # Default now points to SD1.
+        default="SD1_FDL_AerialLandscape",
+
+        choices=sorted(
+            SUPPORTED_SPLITS
+        ),
+
+        help="Frozen research split to use."
     )
 
     args = parser.parse_args()
 
     main(
         epochs=args.epochs,
-        run_name=args.run_name
+        run_name=args.run_name,
+        split_name=args.split
     )
