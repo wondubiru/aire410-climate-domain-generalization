@@ -1,6 +1,7 @@
 from pathlib import Path
 import pandas as pd
 import tensorflow as tf
+import os
 
 
 # ============================================================
@@ -8,7 +9,10 @@ import tensorflow as tf
 # ============================================================
 
 DATASET_ROOT = Path(
-    r"C:\ADU_BSC_All_years\Fourth_year\Fall_2026_27\AIRE410\project\NewDataset"
+    os.environ.get(
+        "AIRE410_DATASET_ROOT",
+        r"C:\ADU_BSC_All_years\Fourth_year\Fall_2026_27\AIRE410\project\NewDataset"
+    )
 )
 
 IMAGE_SIZE = (224, 224)
@@ -83,6 +87,9 @@ def create_dataset(
     dataset = tf.data.Dataset.from_tensor_slices(
         (paths, labels)
     )
+    options = tf.data.Options()
+    options.experimental_deterministic = True
+    dataset = dataset.with_options(options)
 
     if training:
         dataset = dataset.shuffle(
