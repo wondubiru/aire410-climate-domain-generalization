@@ -183,7 +183,7 @@ def build_mobilenet_v2_mixstyle_mid(
     # Full MobileNet still executes.
     #
     # MixStyle occurs internally after block_5_add.
-    x = backbone()
+    x = backbone(x)
 
 
     x = layers.GlobalAveragePooling2D(
