@@ -1,0 +1,26 @@
+{
+    "benchmark_id": "EXT_UAV_FLOODNET_V1",
+    "experiment": "E018_MobileNetV2_DGAugV2_SD1_seed123",
+    "model_name": "MobileNetV2_ImageNet_DG_AUG_V2",
+    "n_samples": 398,
+    "true_classes": [
+        "Flooded",
+        "Neither"
+    ],
+    "model_output_classes": [
+        "Desert",
+        "Flooded",
+        "Neither"
+    ],
+    "probability_renormalization": false,
+    "desert_predictions_count": 1,
+    "desert_prediction_rate": 0.002512562814070352,
+    "cross_entropy_loss": 3.1017024517059326,
+    "accuracy": 0.3442211055276382,
+    "supported_macro_precision": 0.5686934491494752,
+    "supported_macro_recall": 0.6071933096004973,
+    "supported_macro_f1": 0.33824450609155876,
+    "supported_macro_auroc": 0.8140927840876986,
+    "supported_macro_auprc": 0.6995812645621615,
+    "hash_verification": "passed"
+}
