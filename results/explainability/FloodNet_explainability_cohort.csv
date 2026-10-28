@@ -1,0 +1,10 @@
+cohort_group,confidence_tier,filename,relative_path,aire410_label,selection_score,n_pred_flooded,n_pred_neither,mean_prob_flooded,mean_prob_neither
+flooded_consensus_correct,low,8408.jpg,Train/Labeled/Flooded/image/8408.jpg,Flooded,0.8632458322222223,9,0,0.8632458322222223,0.1349181027777778
+flooded_consensus_correct,median,7405.jpg,Train/Labeled/Flooded/image/7405.jpg,Flooded,0.981542121111111,9,0,0.981542121111111,0.018456247696666664
+flooded_consensus_correct,high,7556.jpg,Train/Labeled/Flooded/image/7556.jpg,Flooded,0.9994215744444443,9,0,0.9994215744444443,0.0005544637331111111
+neither_consensus_correct,low,7929.jpg,Train/Labeled/Non-Flooded/image/7929.jpg,Neither,0.7847737777777778,0,9,0.21453867866666668,0.7847737777777778
+neither_consensus_correct,median,8210.jpg,Train/Labeled/Non-Flooded/image/8210.jpg,Neither,0.9683670744444446,0,9,0.03018669116666666,0.9683670744444446
+neither_consensus_correct,high,7920.jpg,Train/Labeled/Non-Flooded/image/7920.jpg,Neither,0.9972041744444444,0,9,0.00242421796,0.9972041744444444
+neither_to_flooded_consensus_failure,low,6397.jpg,Train/Labeled/Non-Flooded/image/6397.jpg,Neither,0.6896170722222222,9,0,0.6896170722222222,0.3101089255555556
+neither_to_flooded_consensus_failure,median,8176.jpg,Train/Labeled/Non-Flooded/image/8176.jpg,Neither,0.9632514766666667,9,0,0.9632514766666667,0.03672746581111111
+neither_to_flooded_consensus_failure,high,10840.jpg,Train/Labeled/Non-Flooded/image/10840.jpg,Neither,0.9999740899999998,9,0,0.9999740899999998,2.2166259211111113e-05
