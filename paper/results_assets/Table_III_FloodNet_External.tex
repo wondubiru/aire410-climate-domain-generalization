@@ -1,0 +1,20 @@
+
+\begin{table*}[t]
+\centering
+\caption{Three-Seed Mean External FloodNet UAV Performance.
+Supported Macro-F1 is computed over Flooded and Neither;
+Desert predictions remain errors.}
+\label{tab:floodnet_external}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lccccccc}
+\hline
+Method & Acc. & Supp. F1 & AUROC & AUPRC &
+Flood R. & Neither R. & False-Flood \\
+\hline
+ERM & 0.3886 & 0.3753$\pm$0.0468 & 0.7820 & 0.6305 & 0.9542 & 0.3055 & 0.6907 \\
+DG-AUG-V2 & 0.3886 & 0.3729$\pm$0.0824 & 0.7730 & 0.6392 & 0.9477 & 0.3064 & 0.6907 \\
+RSC & 0.3735 & 0.3619$\pm$0.0764 & 0.7848 & 0.6300 & 0.9804 & 0.2843 & 0.7109 \\
+\hline
+\end{tabular}
+\end{table*}
