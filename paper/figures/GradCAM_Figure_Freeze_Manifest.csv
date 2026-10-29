@@ -1,0 +1,2 @@
+file,sha256,bytes,selection_rule,examples,scientific_processing
+paper/figures/Fig_GradCAM_Representative_Median_Cases.png,f0f977d77721658b9272944bf30488c2d908ea5265967a62b672c9cf4270aaa0,8349213,Frozen median-confidence examples,7405 Flooded-correct; 8210 Neither-correct; 8176 Neither-to-Flooded failure,Original frozen comparison PNGs; outer whitespace crop only; no heatmap regeneration; no scientific image resizing
