@@ -1,0 +1,2 @@
+file,sha256,bytes,source,comparison,protocols,headline
+paper/figures/Fig_Mixed_vs_Source_Disjoint_MacroF1.png,2fc6b6c81754a34f9e7a4a2424c8c9f3f65ae22d84cab3ef9699e4a439fdade1,108988,Frozen Table I,CustomCNN vs MobileNetV2 ImageNet pipeline,"Mixed, SD1, SD2, SD3, SD4",MobileNetV2 Mixed-to-SD1 Macro-F1 drop = 45.008 pp
