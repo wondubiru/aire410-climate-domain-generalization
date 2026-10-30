@@ -1,0 +1,2 @@
+file,sha256,bytes,source,methods,metrics,headline
+paper/figures/Fig_FloodNet_External_Asymmetric_Failure.png,6d484ed4ab5ea949050ba04edd390c0c8b488d4d8c972579f9db373ff806ddef,95675,Frozen Table III,ERM; DG-AUG-V2; RSC,Flooded recall; Neither recall; False-flood rate,External UAV evaluation shows high Flooded sensitivity but severe Neither-to-Flooded errors
