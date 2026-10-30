@@ -1,0 +1,76 @@
+\section{Experimental Protocol}
+\label{sec:protocol}
+
+\subsection{Mixed Evaluation}
+
+The frozen mixed partition contains:
+
+\begin{itemize}
+    \item 4,524 training images,
+    \item 905 validation images,
+    \item 905 test images.
+\end{itemize}
+
+\subsection{Source-Disjoint Evaluation}
+
+Four source-disjoint composite folds, SD1--SD4, are used to test
+generalization to held-out image sources. SD1 is the most challenging
+setting and has a frozen test set of 1,097 images.
+
+% TODO: insert SD1--SD4 held-out-source table.
+
+\subsection{Multi-Seed Replication}
+
+The SD1 ERM, DG-AUG-V2, and RSC experiments are repeated using:
+
+\[
+42,\quad123,\quad2026.
+\]
+
+Split membership remains fixed across seeds.
+
+\subsection{External FloodNet UAV Evaluation}
+
+FloodNet provides 398 labeled UAV scenes:
+
+\begin{itemize}
+    \item 51 Flooded,
+    \item 347 Non-Flooded.
+\end{itemize}
+
+Flooded maps to Flooded and Non-Flooded maps to Neither. The original
+three-class model output is retained; Desert predictions remain errors.
+
+Supported-class external Macro-F1 is therefore computed over Flooded
+and Neither without probability renormalization.
+
+Exact SHA-256 and perceptual-hash screening found no exact or strongly
+suspicious image-level overlap with the primary dataset.
+
+\subsection{Explainability Cohort}
+
+A frozen Grad-CAM cohort contains low-, median-, and high-confidence
+examples from:
+
+\begin{enumerate}
+    \item consensus-correct Flooded,
+    \item consensus-correct Neither,
+    \item consensus Neither-to-Flooded failure.
+\end{enumerate}
+
+Three methods are evaluated on each example, producing 27 heatmaps.
+
+\subsection{Post-Hoc Segmentation Audit}
+
+Official FloodNet segmentation masks are used to compare:
+
+\begin{itemize}
+    \item 178 consensus false-flood scenes,
+    \item 56 consensus-correct Neither scenes.
+\end{itemize}
+
+Presence is compared using Fisher's exact test and pixel coverage using
+the Mann--Whitney U test. Holm correction is applied across all ten
+segmentation classes.
+
+This analysis is exploratory and post hoc.

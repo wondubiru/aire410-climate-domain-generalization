@@ -1,0 +1,93 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{cite}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{url}
+\usepackage{balance}
+\usepackage[hidelinks]{hyperref}
+
+\graphicspath{{figures/}}
+
+\title{
+Robust Cross-Domain Climate Scene Classification Across UAV and
+Satellite Imagery: Generalization Analysis, External Validation,
+and Contextual Shortcut Discovery
+}
+
+% TODO: replace with final authors
+\author{
+Author 1,
+Author 2
+}
+
+\begin{document}
+\raggedbottom
+
+\maketitle
+
+\begin{abstract}
+Climate-related aerial scene classification is commonly evaluated
+using random train--test splits, although such protocols may
+overestimate robustness when images originate from heterogeneous UAV,
+satellite, aerial, and aggregated sources. This study investigates
+cross-source generalization for three-class classification of Flooded,
+Desert, and Neither scenes using a 6,334-image climate dataset.
+
+A custom convolutional neural network and an ImageNet-pretrained
+MobileNetV2 pipeline are evaluated under mixed and source-disjoint
+protocols, followed by three-seed experiments with conservative
+domain-generalization augmentation and Representation
+Self-Challenging. External UAV validation is performed using FloodNet.
+
+The MobileNetV2 pipeline achieves a mixed-split Macro-F1 of 0.9775,
+but decreases to 0.5274 on the most challenging source-disjoint split.
+Across three seeds on this split, ERM obtains
+$0.4988\pm0.0259$ Macro-F1, while DG-AUG-V2 and RSC obtain
+$0.4831\pm0.0443$ and $0.4883\pm0.0329$, respectively.
+
+External FloodNet evaluation reveals a persistent asymmetric failure:
+Flooded recall remains high while Neither recall is substantially
+lower. Among 347 external Neither scenes, 178 are predicted as
+Flooded by all nine frozen models. Grad-CAM and a post-hoc analysis
+of official FloodNet segmentation masks further show that consensus
+false-flood scenes contain substantially more ordinary water and
+non-flooded road context than consensus-correct Neither scenes.
+
+These findings demonstrate that high mixed-split performance does not
+guarantee cross-source robustness and are consistent with reliance on
+flood-associated contextual cues rather than a complete semantic
+distinction between ordinary water and true inundation.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Deep learning,
+remote sensing,
+UAV imagery,
+satellite imagery,
+domain shift,
+domain generalization,
+flood classification,
+transfer learning,
+Grad-CAM,
+cross-source generalization.
+\end{IEEEkeywords}
+
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_methodology}
+\input{sections/04_experimental_protocol}
+\input{sections/05_results_discussion}
+\input{sections/06_limitations_future_work}
+\input{sections/07_conclusion}
+
+% Acknowledgment will be inserted after final author/disclosure review.
+
+% \bibliographystyle{IEEEtran}
+% \bibliography{references}
+
+\end{document}

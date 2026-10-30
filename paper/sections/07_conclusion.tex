@@ -1,0 +1,23 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+This study demonstrates that high mixed-split climate-scene
+classification performance does not guarantee cross-source
+robustness.
+
+MobileNetV2 achieves a mixed Macro-F1 of 0.9775 but decreases to
+0.5274 on SD1. Three-seed experiments show that DG-AUG-V2 and RSC do
+not consistently outperform ERM.
+
+External FloodNet validation independently reproduces a strong
+Neither-to-Flooded failure. Among 347 true-Neither scenes, 178 are
+classified as Flooded by all nine frozen models.
+
+Grad-CAM and official FloodNet segmentation masks further show that
+these failures are strongly associated with ordinary water,
+non-flooded roads, and heterogeneous scene composition.
+
+The results highlight the importance of source-aware evaluation,
+multi-seed replication, independent external validation, and explicit
+failure analysis when assessing deep-learning systems for
+climate-related aerial imagery.

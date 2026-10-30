@@ -1,0 +1,239 @@
+\section{Results and Discussion}
+\label{sec:results}
+
+% ============================================================
+% A. MIXED + SOURCE-DISJOINT
+% ============================================================
+
+\subsection{Mixed and Source-Disjoint Performance}
+
+The CustomCNN obtains a mixed Macro-F1 of 0.9453, while the
+MobileNetV2 pipeline obtains 0.9775.
+
+\input{results_assets/Table_I_Mixed_Source_Disjoint.tex}
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.84\textwidth]
+{Fig_Mixed_vs_Source_Disjoint_MacroF1.png}
+\caption{
+Macro-F1 under mixed and source-disjoint evaluation.
+Both pipelines achieve strong mixed-split performance but deteriorate
+on unseen sources, particularly SD1. MobileNetV2 decreases from
+0.9775 under mixed evaluation to 0.5274 on SD1, corresponding to a
+45.0-percentage-point drop.
+}
+\label{fig:mixed_source}
+\end{figure*}
+
+Across SD1--SD4, CustomCNN achieves mean Macro-F1 0.6579 and
+MobileNetV2 achieves 0.7476, an observed difference of 8.97 percentage
+points. This should not be attributed solely to ImageNet pretraining
+because architecture and training strategy also differ.
+
+The substantial variation across the source-disjoint folds further
+shows that apparent robustness depends strongly on which image sources
+are withheld.
+
+% ============================================================
+% B. MULTI-SEED DG
+% ============================================================
+
+\subsection{Three-Seed Domain-Generalization Evaluation}
+
+\input{results_assets/Table_II_SD1_Multiseed.tex}
+
+ERM obtains $0.4988\pm0.0259$, DG-AUG-V2 obtains
+$0.4831\pm0.0443$, and RSC obtains $0.4883\pm0.0329$.
+
+Neither intervention consistently improves upon ERM. DG-AUG-V2 has a
+lower mean and higher variability, whereas RSC is strongly
+seed-sensitive. RSC improves over ERM for seed 2026 but performs worse
+for seeds 42 and 123.
+
+% ============================================================
+% C. EXTERNAL FLOODNET
+% ============================================================
+
+\subsection{External FloodNet UAV Validation}
+
+\input{results_assets/Table_III_FloodNet_External.tex}
+
+ERM obtains supported-class Macro-F1
+$0.3753\pm0.0468$. DG-AUG-V2 and RSC obtain
+$0.3729\pm0.0824$ and $0.3619\pm0.0764$, respectively.
+
+For ERM, mean Flooded recall is 0.9542 and mean Neither recall is
+0.3055.
+
+Among 347 external true-Neither scenes:
+
+\begin{itemize}
+    \item 178 (51.3\%) are predicted Flooded by all nine models,
+    \item 56 (16.1\%) are predicted Neither by all nine models,
+    \item 113 (32.6\%) show disagreement.
+\end{itemize}
+
+The agreement across methods and seeds indicates that this external
+error is systematic rather than specific to a single model run.
+
+% ============================================================
+% COMBINE FORMER FIGURES 2 + 3
+% ============================================================
+
+\begin{figure*}[!t]
+\centering
+
+\begin{minipage}[t]{0.485\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]
+    {Fig_SD1_ThreeSeed_Method_Comparison.png}
+
+    \vspace{-1mm}
+    \textbf{(a)}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.485\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]
+    {Fig_FloodNet_External_Asymmetric_Failure.png}
+
+    \vspace{-1mm}
+    \textbf{(b)}
+\end{minipage}
+
+\caption{
+Robustness evaluation beyond the mixed split.
+(a) SD1 Macro-F1 across seeds 42, 123, and 2026. RSC underperforms
+ERM on two seeds but exceeds it on seed 2026, illustrating the danger
+of drawing conclusions from a single favorable run.
+(b) External FloodNet UAV evaluation. All three methods retain high
+Flooded recall but exhibit low Neither recall and high false-flood
+rates.
+}
+\label{fig:robustness_pair}
+\end{figure*}
+
+% ============================================================
+% D. GRAD-CAM
+% ============================================================
+
+\subsection{Grad-CAM Analysis}
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.92\textwidth]
+{Fig_GradCAM_Representative_Median_Cases.png}
+\caption{
+Representative Grad-CAM visualizations from the frozen
+median-confidence cohort.
+(a) Consensus-correct Flooded scene,
+(b) consensus-correct Neither scene, and
+(c) consensus Neither-to-Flooded failure.
+Columns show the original image and Grad-CAM maps from ERM,
+DG-AUG-V2, and RSC.
+}
+\label{fig:gradcam}
+\end{figure*}
+
+Correct Neither scenes frequently emphasize homogeneous vegetation
+and land texture. Several false-flood cases instead emphasize
+water-like regions, roads, boundaries, and adjacent infrastructure.
+
+ERM and DG-AUG-V2 often produce similar spatial activation patterns,
+whereas RSC tends to produce broader or spatially shifted activation.
+
+These maps are qualitative explanatory evidence and are not interpreted
+as causal proof of the model's decision process.
+
+% ============================================================
+% E. SEGMENTATION SHORTCUT ANALYSIS
+% ============================================================
+
+\subsection{Segmentation-Based Failure Analysis}
+
+\input{results_assets/Table_IV_Segmentation_Shortcut.tex}
+
+Water is present in 51.7\% of consensus false-flood scenes but only
+5.4\% of consensus-correct Neither scenes. After Holm correction:
+
+\[
+p_{\mathrm{Holm}}=2.42\times10^{-10}.
+\]
+
+Non-flooded roads are present in 73.0\% of failures and 14.3\% of
+correct scenes:
+
+\[
+p_{\mathrm{Holm}}=3.95\times10^{-14}.
+\]
+
+Grass presence itself is not significantly different after Holm
+correction. However, mean Grass coverage is 51.88\% in failures and
+85.25\% in correct scenes:
+
+\[
+p_{\mathrm{Holm}}=2.02\times10^{-16}.
+\]
+
+Road-flooded and Building-flooded pixels are absent from both
+consensus groups.
+
+% ============================================================
+% COMBINE FORMER SEGMENTATION FIGURES 5 + 6
+% ============================================================
+
+\begin{figure*}[!t]
+\centering
+
+\begin{minipage}[t]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]
+    {Fig_segmentation_class_presence_rates.png}
+
+    \vspace{-1mm}
+    \textbf{(a)}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]
+    {Fig_segmentation_mean_pixel_coverage.png}
+
+    \vspace{-1mm}
+    \textbf{(b)}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]
+    {Fig_water_coverage_threshold_curve.png}
+
+    \vspace{-1mm}
+    \textbf{(c)}
+\end{minipage}
+
+\caption{
+Post-hoc FloodNet segmentation analysis.
+(a) Segmentation-class presence rates.
+(b) Mean image area occupied by each segmentation class.
+(c) Fraction of consensus-failure and consensus-correct Neither scenes
+meeting increasingly strict Water-coverage thresholds.
+Consensus false-flood scenes contain substantially more ordinary Water
+and non-flooded Road context and are less strongly grass-dominated.
+}
+\label{fig:segmentation_triptych}
+\end{figure*}
+
+Taken together with the Grad-CAM observations, the segmentation
+analysis is consistent with reliance on flood-associated contextual
+cues, including ordinary water, non-flooded roads, and heterogeneous
+terrain, rather than a complete semantic distinction between ordinary
+water and true inundation.
+
+Because the segmentation hypothesis was developed after observing the
+external failure pattern, these results establish association rather
+than causality.
+
+% Ensure Results floats appear before Limitations.
+\clearpage

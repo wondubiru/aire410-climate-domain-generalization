@@ -1,0 +1,24 @@
+\section{Limitations and Future Work}
+\label{sec:limitations}
+
+First, source identity, semantic class, and acquisition modality are
+partially confounded, so the internal source-disjoint experiments do
+not isolate a purely causal UAV-versus-satellite shift.
+
+Second, FloodNet supports only Flooded and Non-Flooded ground truth,
+although the original three-class model output is preserved.
+
+Third, the segmentation shortcut analysis is post hoc and should be
+interpreted as exploratory association rather than causal evidence.
+
+Fourth, Grad-CAM provides spatial sensitivity information but does not
+prove causal decision mechanisms.
+
+Fifth, the CustomCNN and MobileNetV2 pipelines differ in architecture
+and training strategy, so their performance difference cannot be
+attributed solely to ImageNet pretraining.
+
+Future work should evaluate additional recent external UAV and
+satellite datasets, use acquisition-balanced datasets, investigate
+segmentation-aware models, evaluate calibration, and perform causal
+context interventions.

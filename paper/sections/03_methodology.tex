@@ -1,0 +1,71 @@
+\section{Methodology}
+\label{sec:methodology}
+
+\subsection{Climate Scene Dataset}
+
+The primary dataset contains 6,334 aerial images distributed across
+three classes:
+
+\begin{itemize}
+    \item Desert: 1,931,
+    \item Flooded: 2,338,
+    \item Neither: 2,065.
+\end{itemize}
+
+Eight source groups were reconstructed at image level with no
+unresolved assignments. Because acquisition domain, semantic class,
+and source identity are partially entangled, the internal experiments
+are described as source-disjoint composite evaluations rather than
+pure causal modality-shift experiments.
+
+\subsection{Preprocessing}
+
+All images are resized to $224\times224$ and converted to floating
+point values in $[0,1]$. The fixed class order is:
+
+\[
+[\text{Desert},\text{Flooded},\text{Neither}].
+\]
+
+Training-time augmentation is applied only to the training data.
+
+% TODO: extract exact baseline augmentation parameters from code.
+
+\subsection{Custom CNN}
+
+A custom CNN is used as a from-scratch baseline and contains
+approximately 111,043 trainable parameters.
+
+% TODO: insert exact layer architecture from source code.
+
+\subsection{MobileNetV2 Transfer Learning}
+
+The transfer-learning pipeline uses MobileNetV2 initialized with
+ImageNet weights. Its classifier head contains global average pooling,
+dropout of 0.30, and a three-unit softmax classifier.
+
+Training uses two stages. Stage 1 freezes the backbone and optimizes
+the classifier head using Adam with learning rate $10^{-3}$.
+Stage 2 unfreezes the final 30 backbone layers while keeping Batch
+Normalization layers frozen and fine-tunes using learning rate
+$10^{-5}$.
+
+Validation loss determines model selection. The test set is never used
+for checkpoint selection.
+
+\subsection{DG-AUG-V2}
+
+DG-AUG-V2 extends the baseline augmentation with conservative
+translation and brightness variation. The frozen configuration uses
+translation factor 0.05 and brightness factor 0.08.
+
+\subsection{Representation Self-Challenging}
+
+RSC is implemented using a custom training step that suppresses highly
+predictive feature dimensions and challenges a fraction of the
+training batch.
+
+\subsection{Evaluation Metrics}
+
+Macro-F1 is the primary metric. Secondary metrics include accuracy,
+precision, recall, confusion matrices, AUROC, and AUPRC.
