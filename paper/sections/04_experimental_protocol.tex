@@ -3,74 +3,286 @@
 
 \subsection{Mixed Evaluation}
 
-The frozen mixed partition contains:
+The conventional baseline uses the frozen
+\texttt{MIXED\_RANDOM\_V1} partition. Images from the available
+source groups may occur across the development and test partitions,
+while duplicate-control grouping is applied during split construction.
+The resulting partition contains
 
 \begin{itemize}
     \item 4,524 training images,
-    \item 905 validation images,
+    \item 905 validation images, and
     \item 905 test images.
 \end{itemize}
 
+This protocol measures performance when training, validation, and test
+samples are drawn from the same overall heterogeneous dataset.
+Consequently, it represents the evaluation setting most likely to
+benefit from source-specific regularities shared across partitions.
+
+The validation partition is used for checkpoint selection and
+training-control decisions. The test partition remains isolated until
+the selected model is evaluated. CustomCNN\_V1 and MobileNetV2 are
+first compared under this mixed protocol to establish their
+within-dataset reference performance.
+
 \subsection{Source-Disjoint Evaluation}
 
-Four source-disjoint composite folds, SD1--SD4, are used to test
-generalization to held-out image sources. SD1 is the most challenging
-setting and has a frozen test set of 1,097 images.
+To evaluate sensitivity to image provenance, four frozen
+source-disjoint composite folds are constructed. For each fold,
+complete source groups are withheld from model development and used
+only as the final test set. Images belonging to those held-out source
+groups are absent from both training and validation.
 
-% TODO: insert SD1--SD4 held-out-source table.
+Table~\ref{tab:source_disjoint_protocol} summarizes the four frozen
+test configurations. Class counts are reported because source identity
+and semantic class are partially entangled in the assembled dataset.
 
-\subsection{Multi-Seed Replication}
+\begin{table*}[t]
+\centering
+\caption{Frozen Source-Disjoint Evaluation Protocols}
+\label{tab:source_disjoint_protocol}
+\small
+\begin{tabular}{p{0.06\textwidth} p{0.43\textwidth} rrrr}
+\hline
+\textbf{Fold} &
+\textbf{Held-Out Source Group(s)} &
+\textbf{Desert} &
+\textbf{Flooded} &
+\textbf{Neither} &
+\textbf{Total} \\
+\hline
 
-The SD1 ERM, DG-AUG-V2, and RSC experiments are repeated using:
+SD1 &
+FDL UAV Flooded Areas + Aerial Landscape Images &
+800 & 130 & 167 & 1,097 \\
+
+SD2 &
+Louisiana Flood 2016 + Satellite Image Classification &
+1,131 & 102 & 161 & 1,394 \\
+
+SD3 &
+Disasters Dataset + Aerial Landscape Images &
+800 & 1,493 & 137 & 2,430 \\
+
+SD4 &
+Cyclone/Wildfire/Flood/Earthquake +
+Satellite Image Classification +
+Forest Aerial/DeepGlobe-derived imagery &
+1,131 & 613 & 1,000 & 2,744 \\
+
+\hline
+\end{tabular}
+\end{table*}
+
+The four folds intentionally represent different combinations of
+source composition rather than four equivalent balanced test sets.
+Accordingly, differences among SD1--SD4 are not interpreted as
+controlled estimates of a single modality effect. Instead, they
+measure robustness under different composite source-distribution
+shifts.
+
+CustomCNN\_V1 and MobileNetV2 are evaluated on all four folds using
+the same preprocessing, class ordering, and evaluation metrics
+defined in Section~\ref{sec:methodology}. The mean across SD1--SD4
+is reported as a compact summary, while the individual folds remain
+primary evidence because difficulty depends strongly on which source
+groups are withheld.
+
+Among the four baseline source-disjoint evaluations, SD1 produces
+the lowest Macro-F1 for both principal architectures. SD1 is therefore
+frozen as the focused robustness setting for the subsequent
+domain-generalization experiments. The selection is based on the
+baseline source-disjoint evaluation and is then kept fixed for all
+later ERM, DG-AUG-V2, MixStyle, and RSC experiments.
+
+\subsection{SD1 Development Partition}
+
+For SD1, the complete FDL UAV Flooded Areas and Aerial Landscape
+source groups form the 1,097-image test set. The remaining source
+groups are separated into 4,488 training images and 749 validation
+images:
 
 \[
-42,\quad123,\quad2026.
+N_{\mathrm{train}}=4488,\qquad
+N_{\mathrm{val}}=749,\qquad
+N_{\mathrm{test}}=1097.
 \]
 
-Split membership remains fixed across seeds.
+The SD1 test set is not used for epoch selection, hyperparameter
+selection, or checkpoint selection. Such decisions are based only on
+the training and validation partitions.
+
+The same frozen SD1 membership is reused across methods and random
+seeds. This prevents differences in image membership from being
+confounded with differences caused by initialization or training
+strategy.
+
+\subsection{Multi-Seed Robustness Evaluation}
+
+Single-run comparisons can overstate the benefit of a robustness
+method when optimization variability is substantial. The primary SD1
+robustness comparison therefore evaluates three methods over three
+random seeds:
+
+\[
+\mathcal{S}=\{42,123,2026\}.
+\]
+
+The repeated methods are
+
+\[
+\{
+\mathrm{ERM},
+\mathrm{DG\mbox{-}AUG\mbox{-}V2},
+\mathrm{RSC}
+\}.
+\]
+
+This design produces nine frozen models for the principal multi-seed
+analysis. For every seed, data membership remains unchanged; only the
+stochastic training trajectory changes. Results are summarized using
+the arithmetic mean and sample standard deviation of Macro-F1.
+
+MixStyle is not included in the three-seed comparison. Its late- and
+mid-feature insertion variants are retained as diagnostic single-run
+experiments and are interpreted separately rather than being presented
+as seed-replicated DG evidence.
 
 \subsection{External FloodNet UAV Evaluation}
 
-FloodNet provides 398 labeled UAV scenes:
+The nine frozen multi-seed models are subsequently evaluated on the
+independent labeled FloodNet UAV subset. The external set contains
+398 images:
 
 \begin{itemize}
-    \item 51 Flooded,
-    \item 347 Non-Flooded.
+    \item 51 Flooded scenes,
+    \item 347 Non-Flooded scenes.
 \end{itemize}
 
-Flooded maps to Flooded and Non-Flooded maps to Neither. The original
-three-class model output is retained; Desert predictions remain errors.
+FloodNet Flooded maps to the internal Flooded class, whereas
+Non-Flooded maps to Neither. No FloodNet image is assigned the Desert
+ground-truth label.
 
-Supported-class external Macro-F1 is therefore computed over Flooded
-and Neither without probability renormalization.
+The original three-class prediction vector is retained during external
+inference. Desert predictions therefore remain incorrect outputs
+instead of being removed before metric calculation. Supported-class
+external Macro-F1 is computed over Flooded and Neither without
+probability renormalization.
 
-Exact SHA-256 and perceptual-hash screening found no exact or strongly
-suspicious image-level overlap with the primary dataset.
+Before model evaluation, the external images are screened against all
+6,334 primary-dataset images. Exact duplicate detection uses SHA-256
+hashes. Perceptual-hash comparison is then used to identify potential
+near-duplicate imagery that could survive resizing or re-encoding.
+The frozen audit finds no exact overlap and no strongly suspicious
+image-level match.
 
-\subsection{Explainability Cohort}
+External results are reported independently for ERM, DG-AUG-V2, and
+RSC across the same three seeds used in the SD1 robustness study.
+This permits comparison of internal source-disjoint behavior with an
+independently collected UAV domain.
 
-A frozen Grad-CAM cohort contains low-, median-, and high-confidence
-examples from:
+\subsection{Consensus Failure Cohorts}
+
+Predictions from all nine external models are used to define
+agreement-based cohorts among the 347 true Neither FloodNet scenes.
+
+Three groups are considered:
+
+\begin{enumerate}
+    \item \textbf{Consensus failure:} all nine models predict Flooded;
+    \item \textbf{Consensus correct:} all nine models predict Neither;
+    \item \textbf{Mixed agreement:} the nine predictions do not
+    unanimously satisfy either condition.
+\end{enumerate}
+
+The frozen predictions yield 178 consensus failures,
+56 consensus-correct Neither images, and 113 mixed-agreement images.
+Cohort membership is determined before Grad-CAM or segmentation-mask
+interpretation.
+
+The unanimity criterion is intentionally strict. A consensus failure
+must persist across variation in both training method and random seed,
+making it more informative for studying recurring cross-model errors
+than a mistake produced by only one checkpoint.
+
+\subsection{Grad-CAM Sampling Protocol}
+
+The Grad-CAM analysis uses three behavior categories:
 
 \begin{enumerate}
     \item consensus-correct Flooded,
-    \item consensus-correct Neither,
+    \item consensus-correct Neither, and
     \item consensus Neither-to-Flooded failure.
 \end{enumerate}
 
-Three methods are evaluated on each example, producing 27 heatmaps.
+Within each category, examples are ranked using frozen prediction
+confidence, and low-, median-, and high-confidence representatives are
+selected algorithmically before heatmap interpretation. This reduces
+the risk of manually selecting visually convenient examples after
+seeing the explanations.
+
+For every selected image, Grad-CAM is generated from the seed-42 ERM,
+DG-AUG-V2, and RSC models. The resulting design contains
+
+\[
+3\ \text{behavior groups}
+\times
+3\ \text{confidence levels}
+\times
+3\ \text{methods}
+=
+27
+\]
+
+heatmaps.
+
+The selected examples and resulting heatmaps are frozen before the
+subsequent segmentation-based shortcut analysis.
 
 \subsection{Post-Hoc Segmentation Audit}
 
-Official FloodNet segmentation masks are used to compare:
+The segmentation audit focuses on the two unanimous Neither cohorts:
 
 \begin{itemize}
-    \item 178 consensus false-flood scenes,
+    \item 178 consensus Neither-to-Flooded failures,
     \item 56 consensus-correct Neither scenes.
 \end{itemize}
 
-Presence is compared using Fisher's exact test and pixel coverage using
-the Mann--Whitney U test. Holm correction is applied across all ten
-segmentation classes.
+Official FloodNet semantic masks provide the scene-composition labels.
+For each of the ten segmentation classes, two statistical comparisons
+are performed.
 
-This analysis is exploratory and post hoc.
+First, semantic-class \emph{presence} is represented as a binary
+image-level variable and compared between cohorts using Fisher's exact
+test. Second, semantic-class \emph{pixel coverage} is represented by
+the fraction of pixels assigned to the class and compared using the
+Mann--Whitney \(U\) test.
+
+Because ten semantic categories are examined, family-wise
+multiple-testing correction is performed using the Holm procedure.
+Both raw and Holm-adjusted \(p\)-values are retained in the evidence
+tables, while adjusted values are used for the principal significance
+interpretation.
+
+The segmentation audit is post hoc and exploratory. It is intended to
+identify scene characteristics statistically associated with systematic
+external failure, not to establish a causal mechanism for model
+predictions.
+
+\subsection{Experiment-Freezing and Model-Selection Rules}
+
+The experimental design follows several rules intended to reduce
+leakage and retrospective selection.
+
+First, model checkpoints are selected using validation loss rather than
+test performance. Second, membership of the mixed and source-disjoint
+partitions remains fixed during architecture and method comparisons.
+Third, multi-seed conclusions are based on the complete prespecified
+seed set rather than a favorable individual run.
+
+Primary result tables are generated from frozen experiment outputs.
+Diagnostic experiments that were superseded or were not replicated
+across the required seed set remain identifiable as diagnostic
+evidence and are not promoted to the same evidentiary status as the
+primary comparisons.

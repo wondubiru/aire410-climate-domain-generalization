@@ -1,67 +1,50 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Flooding and desertification are visible manifestations of
-environmental stress that can affect transportation, infrastructure,
-agriculture, ecosystems, and human settlements. Aerial and
-remote-sensing imagery provides an efficient mechanism for monitoring
-large geographic regions; however, automatic scene classification
-remains difficult when imagery is collected from heterogeneous
-platforms, locations, resolutions, and source datasets.
+Remote sensing and aerial imaging have become important tools for observing climate-related hazards and environmental conditions over large geographic areas. Satellite platforms provide repeated wide-area coverage, while unmanned aerial vehicles (UAVs) can capture high-resolution imagery of localized events such as flooding, infrastructure damage, and post-disaster environments. Deep learning has consequently been applied to flood mapping, disaster-scene recognition, land-cover classification, and environmental monitoring using both satellite and UAV imagery \cite{bonafilia2020sen1floods11,rahnemoonfar2021floodnet,kyrkou2020emergencynet,vanexel2025climate}. Similar advances in aerial scene classification have been enabled by increasingly large benchmarks such as AID, NWPU-RESISC45, EuroSAT, and Million-AID \cite{xia2017aid,cheng2017resisc45,helber2019eurosat,long2021millionaid}.
 
-Deep convolutional neural networks can achieve high classification
-accuracy when training and test images are sampled from similar
-distributions. Such performance may not reflect deployment robustness,
-particularly when images from the same source characteristics are
-present in both training and test partitions.
+Despite these advances, high accuracy on a conventional random train--test split does not necessarily imply reliable deployment performance. Remote-sensing imagery can vary substantially with platform, sensor, altitude, spatial resolution, geographic location, season, illumination, acquisition procedure, and source dataset. When images sharing similar source characteristics appear in both the training and test partitions, a model may benefit from source-specific regularities that will not remain available when it encounters imagery from an unseen source. Real-world distribution-shift benchmarks have repeatedly shown that models performing strongly under in-distribution evaluation may degrade under naturally shifted deployment conditions \cite{koh2021wilds,gulrajani2021domainbed}. This issue is especially relevant in remote sensing, where recent studies increasingly emphasize geographic, sensor, and acquisition-domain shifts as central challenges for robust deployment \cite{peng2022dasurvey,zhou2023dgsurvey,alemadi2025rwds,liao2026dgsurvey}.
 
-This study therefore treats source-aware evaluation and domain shift
-as central components of climate-scene classification. The task is
-three-class classification of aerial images into \emph{Flooded},
-\emph{Desert}, and \emph{Neither}. The primary dataset contains
-6,334 images assembled from multiple underlying sources.
+Transfer learning provides one possible route toward stronger generalization. ImageNet-pretrained convolutional networks have been widely adopted in remote-sensing classification because pretrained representations can substantially outperform models trained from scratch when labeled domain-specific data are limited \cite{hu2015transfercnn,nogueira2017convnets,ma2024transfer}. However, stronger average performance does not guarantee robustness to unseen acquisition sources. Likewise, domain-generalization (DG) methods are explicitly designed to improve performance on unseen domains, but large-scale benchmarks have shown that sophisticated DG algorithms do not consistently outperform carefully tuned empirical risk minimization (ERM) \cite{gulrajani2021domainbed}. This motivates controlled comparison across fixed source-disjoint splits and multiple random seeds rather than drawing conclusions from a single favorable training run.
+
+The present study investigates this problem using a three-class climate-scene classification task containing \emph{Flooded}, \emph{Desert}, and \emph{Neither} images. The primary dataset contains 6,334 images assembled from multiple underlying aerial and remote-sensing sources. Because source, class composition, acquisition conditions, and platform characteristics are partially entangled, the study does not treat the internal source-disjoint experiments as a pure causal UAV-versus-satellite comparison. Instead, they are interpreted as composite source-distribution shifts intended to reveal how strongly model performance depends on the provenance of the imagery.
 
 The investigation addresses the following research questions:
 
 \begin{itemize}
-    \item \textbf{RQ1:} How much does performance change between
-    conventional mixed evaluation and source-disjoint evaluation?
+    \item \textbf{RQ1:} How much does classification performance change between conventional mixed evaluation and source-disjoint evaluation?
 
-    \item \textbf{RQ2:} How does a MobileNetV2 ImageNet
-    transfer-learning pipeline compare with a custom CNN under
-    cross-source testing?
+    \item \textbf{RQ2:} How does ImageNet-pretrained MobileNetV2 compare with a custom CNN when evaluation is performed on held-out image sources?
 
-    \item \textbf{RQ3:} Do conservative domain-generalization
-    augmentation and Representation Self-Challenging improve
-    robustness consistently across random seeds?
+    \item \textbf{RQ3:} Do conservative domain-generalization augmentation and Representation Self-Challenging improve source-disjoint robustness consistently across random seeds?
 
-    \item \textbf{RQ4:} Do the observed failure patterns persist on an
-    independent external UAV dataset?
+    \item \textbf{RQ4:} Do the dominant failure patterns observed internally persist when the trained models are evaluated on an independent external UAV dataset?
 
-    \item \textbf{RQ5:} Which visual and scene-composition cues are
-    associated with systematic external false-flood predictions?
+    \item \textbf{RQ5:} Which visual and semantic scene-composition cues are associated with systematic external false-flood predictions?
 \end{itemize}
 
-The main contributions of this work are:
+To address these questions, the study reconstructs high-confidence per-image source provenance for the complete 6,334-image dataset and establishes both mixed and source-disjoint evaluation protocols. A custom CNN is compared with an ImageNet-pretrained MobileNetV2 pipeline to examine the effect of transfer learning under source shift. The most challenging source-disjoint setting is then used for controlled multi-seed comparison of ERM, conservative DG augmentation, and Representation Self-Challenging. This design is intended to separate reproducible behavior from improvements that occur only under a favorable random initialization.
+
+The investigation is extended beyond the internal dataset using FloodNet, an independently collected high-resolution UAV flood dataset \cite{rahnemoonfar2021floodnet}. Before external evaluation, exact SHA-based and perceptual-hash leakage checks are performed against the primary dataset. The original three-class output space is retained during external testing; unsupported \emph{Desert} predictions therefore remain errors instead of being removed through renormalization. This preserves the complete behavior of the trained classifier and makes external failure patterns directly observable.
+
+Finally, the study combines model-level and scene-level analysis. Grad-CAM is used to visualize class-discriminative regions \cite{selvaraju2017gradcam}, but the resulting heatmaps are treated as qualitative evidence rather than causal explanations. Because visual explanations can reflect predictive shortcuts instead of the intended semantic concept \cite{geirhos2020shortcut,hohl2024xaireview}, systematic FloodNet failures are additionally compared with available semantic segmentation masks. This post-hoc analysis tests whether ordinary water, non-flooded roads, vegetation, and other scene elements are disproportionately associated with consensus false-flood predictions.
+
+The main contributions of this work are therefore:
 
 \begin{enumerate}
-    \item high-confidence per-image reconstruction of source
-    provenance for the 6,334-image climate dataset;
+    \item high-confidence reconstruction of per-image source provenance for a heterogeneous 6,334-image climate-scene dataset;
 
-    \item mixed and source-disjoint evaluation protocols designed to
-    expose cross-source generalization failure;
+    \item mixed and multiple source-disjoint evaluation protocols designed to expose performance hidden by conventional within-distribution testing;
 
-    \item multi-seed comparison of ERM, DG-AUG-V2, and RSC;
+    \item comparison of a custom CNN and ImageNet-pretrained MobileNetV2 across mixed and source-disjoint conditions;
 
-    \item external UAV validation using FloodNet with leakage
-    screening;
+    \item multi-seed evaluation of ERM, conservative DG augmentation, and Representation Self-Challenging on the most challenging source-disjoint protocol;
 
-    \item frozen Grad-CAM analysis of correct and systematic
-    false-flood predictions; and
+    \item external UAV validation on FloodNet following exact and perceptual leakage screening while preserving the model's complete three-class output behavior;
 
-    \item post-hoc pixel-level segmentation analysis connecting
-    consensus false-flood predictions with ordinary water,
-    non-flooded roads, and heterogeneous scene composition.
+    \item frozen Grad-CAM analysis of correct predictions and systematic external false-flood failures; and
+
+    \item post-hoc pixel-level semantic analysis linking consensus false-flood predictions with ordinary water, non-flooded roads, and heterogeneous scene composition without interpreting these associations as causal evidence.
 \end{enumerate}
 
-% TODO: add verified literature citations here.
+Taken together, the study shifts the emphasis from maximizing accuracy on a single random partition toward measuring, explaining, and characterizing failure under unseen-source and external-domain conditions.
