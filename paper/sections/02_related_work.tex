@@ -1,52 +1,81 @@
 \section{Related Work}
-\label{sec:related}
+\label{sec:related_work}
 
-\subsection{Aerial Disaster and Environmental Classification}
+Research on climate-related scene understanding spans several partially overlapping areas: disaster recognition from UAV and satellite imagery, remote-sensing scene classification, transfer learning, domain adaptation and domain generalization, robustness under distribution shift, and explainable remote-sensing models. Although each area has advanced substantially, their intersection remains comparatively less explored, particularly when a classifier is trained on a heterogeneous collection of aerial sources and is expected to remain reliable on unseen acquisition conditions and external disaster imagery.
 
-% TODO:
-% Flood classification
-% Disaster scene classification
-% Desertification
-% Environmental monitoring
-% UAV vs satellite imagery
+\subsection{Climate and Disaster Scene Understanding}
 
-\subsection{Remote-Sensing Scene Classification}
+Deep learning has become an important component of image-based disaster monitoring because aerial and satellite platforms can rapidly observe regions that are difficult or dangerous to access. Recent work has demonstrated the feasibility of classifying climate-related scenes from heterogeneous remote-sensing imagery \cite{vanexel2025climate}, while UAV-focused systems such as EmergencyNet and subsequent lightweight models have shown that disaster recognition can also be performed under the computational constraints of airborne platforms \cite{kyrkou2020emergencynet,xinjie2024lightweight}. More recent UAV benchmarks further extend the scale of disaster-scene recognition and emphasize the trade-off between predictive performance and deployment efficiency \cite{shianios2026uavdisaster36k,alsaaran2025earthquakeuav}.
 
-% TODO:
-% CNNs
-% Transfer learning
-% Pretrained backbones
-% Data augmentation
-% Evaluation metrics
+Flood understanding has received particularly extensive attention. Sen1Floods11 introduced geographically distributed Sentinel-1 flood observations for supervised flood mapping \cite{bonafilia2020sen1floods11}, whereas FloodNet provided high-resolution post-disaster UAV imagery for flood-scene understanding \cite{rahnemoonfar2021floodnet}. Other benchmarks broaden the acquisition conditions and geographic scope of flood analysis. WorldFloods evaluates flood mapping across independent events and locations \cite{mateogarcia2021worldfloods}, the Global Flood Database captures hundreds of real flood events observed by satellite \cite{tellman2021globalflood}, and SpaceNet 8 couples flood assessment with road and building understanding \cite{hansch2022spacenet8}. More recent datasets, including AIFloodSense, S1GFloods, and STURM-Flood, increasingly emphasize event diversity, geographic coverage, and multisensor observations \cite{simantiris2026aifloodsense,saleh2024damnet,notarangelo2025sturm}. These developments are important because flood appearance varies substantially with geography, sensor characteristics, water turbidity, surrounding vegetation, infrastructure, illumination, and acquisition time.
 
-\subsection{Domain Shift and Cross-Domain Generalization}
+Several studies explicitly investigate heterogeneous or external flood conditions. Zhao \textit{et al.} consider knowledge transfer across heterogeneous satellite imagery for flood-inundation monitoring \cite{zhao2024hfienet}, while Yu \textit{et al.} combine multisource flood monitoring with explainability and report a gap between benchmark performance and more challenging real-world flood scenes \cite{yu2026floodxai}. Post-event classification has also been studied at finer semantic levels, including flood-damaged buildings \cite{wu2024postflood}. Collectively, these works show that excellent performance on a fixed event or dataset does not necessarily imply comparable reliability under new acquisition or environmental conditions.
 
-% TODO:
-% Sensor/platform shift
-% Geographic shift
-% UAV vs satellite shift
-% Domain generalization
-% MixStyle
-% RSC
-% augmentation methods
+Benchmark design has also expanded beyond a single disaster-recognition objective. RescueNet provides high-resolution post-disaster UAV imagery with dense semantic annotations for scene understanding \cite{rahnemoonfar2023rescuenet}, while xBD uses geographically distributed pre- and post-disaster satellite imagery for building localization and damage assessment across multiple disaster types \cite{gupta2019xbd}. At a broader Earth-observation level, DeepGlobe established large-scale satellite benchmarks spanning land-cover segmentation, road extraction, and building detection \cite{demir2018deepglobe}. Although these tasks differ from three-class climate-scene recognition, they demonstrate a broader trend toward evaluating visual models on geographically diverse and operationally meaningful remote-sensing data.
 
-\subsection{Explainability and Shortcut Learning}
 
-% TODO:
-% Grad-CAM
-% shortcut learning
-% spurious correlations
-% contextual bias
-% limitations of saliency maps
+The environmental class ``Desert'' introduces a different but related generalization problem. Desert imagery is not visually homogeneous: dune geometry, exposed soil, rocky terrain, sparse vegetation, atmospheric effects, sensor characteristics, and seasonal conditions can vary substantially. Recent work has examined global dune-pattern classification \cite{zheng2024globaldunes}, large-scale desertification monitoring \cite{chouikhi2025africadesert}, semi-supervised desertification detection \cite{harrou2024desertification}, ensemble-based environmental modeling \cite{boali2024desertensemble}, and multi-region desert segmentation \cite{wang2026dbessdnet}. Cross-temporal dryland classification further demonstrates that even within desert environments, temporal and spectral changes can produce meaningful domain shifts \cite{zhan2026sanddomain}. These studies motivate treating broad environmental categories as heterogeneous domains rather than visually uniform classes.
 
-\subsection{Research Gap}
+\subsection{Remote-Sensing Scene Classification and Transfer Learning}
 
-Existing studies frequently report strong classification performance
-under random or within-dataset partitions, but fewer evaluate whether
-performance remains stable when complete image sources are withheld.
-Independent external validation and quantitative analysis of the scene
-characteristics associated with cross-domain failure are also limited.
+Remote-sensing scene classification has progressed through increasingly large and diverse benchmarks. AID and NWPU-RESISC45 established widely used high-resolution aerial-scene benchmarks \cite{xia2017aid,cheng2017resisc45}, while PatternNet expanded large-scale remote-sensing retrieval and representation evaluation \cite{zhou2018patternnet}. Satellite-oriented datasets such as EuroSAT and BigEarthNet enabled large-scale land-cover learning from Sentinel imagery \cite{helber2019eurosat,sumbul2019bigearthnet}, and Million-AID substantially increased the scale and taxonomic diversity of aerial-scene classification \cite{long2021millionaid}. RSI-CB further emphasized geographically distributed scene data \cite{li2020rsicb}.
 
-This study addresses these gaps by combining provenance-aware
-evaluation, source-disjoint testing, multi-seed experiments, external
-UAV validation, Grad-CAM, and official pixel-level segmentation masks.
+Survey literature similarly documents the transition from handcrafted descriptors toward CNN-based remote-sensing representations \cite{song2019cnnsurvey}, while analyses of scene classification under limited labels emphasize the continuing effects of dataset size, annotation scarcity, and sample composition \cite{dutta2023scarcitysurvey}. More recent reviews extend this trajectory through transformers, foundation models, vision-language systems, and generative approaches while identifying cross-domain generalization and standardized evaluation as open problems \cite{huang2026scenesurvey}. Dataset construction has evolved in parallel. OpenEarthMap covers geographically distributed high-resolution imagery from 44 countries across six continents \cite{xia2023openearthmap}, whereas MEET scales fine-grained geospatial scene classification to more than one million samples while explicitly exploiting surrounding contextual information \cite{li2025meet}. These developments reinforce that benchmark diversity, geographic coverage, and scene context are important variables rather than incidental dataset properties.
+
+
+Other benchmark efforts highlight the importance of acquisition diversity. Functional Map of the World incorporates geographically and temporally distributed satellite observations \cite{christie2018fmow}; So2Sat LCZ42 provides globally distributed Sentinel-1 and Sentinel-2 observations for climate-zone classification \cite{zhu2020so2sat}; SEN12MS combines globally distributed multisensor observations \cite{schmitt2019sen12ms}; and Dynamic World demonstrates operational land-cover classification at global scale \cite{brown2022dynamicworld}. These datasets illustrate an important distinction between increasing sample count and increasing domain diversity: large datasets can still contain regularities tied to particular sensors, locations, or acquisition pipelines.
+
+Transfer learning has therefore become a standard strategy in remote sensing. Early studies showed that representations learned on natural-image datasets can transfer effectively to high-resolution remote-sensing scenes \cite{hu2015transfercnn,nogueira2017convnets}. Architectures such as ResNet and MobileNetV2 subsequently became common transfer-learning backbones because they combine strong representation capacity with practical optimization and deployment characteristics \cite{he2016resnet,sandler2018mobilenetv2}. Transformer architectures, including Swin Transformer, expanded the design space toward hierarchical attention-based representations \cite{liu2021swin}.
+
+Remote-sensing transfer-learning studies further show that the usefulness of pretrained representations depends on the relationship between pretraining and downstream imagery \cite{ma2024transfer}. At the architectural level, systematic analysis of transformers in remote sensing reports strong performance across classification, detection, and segmentation while also highlighting increased computational cost and data requirements \cite{wang2024transformersurvey}. These observations support using transfer learning as a strong practical baseline while avoiding the assumption that architectural scale alone guarantees robustness to unseen sources.
+
+
+More recently, research has moved from generic ImageNet initialization toward remote-sensing-specific pretraining. Seasonal Contrast exploits temporal invariances in unlabeled Earth-observation data \cite{manas2021seco}, while geography-aware self-supervision explicitly incorporates spatial and temporal information \cite{ayush2021geoaware}. SatMAE extends masked autoencoding to temporal and multispectral satellite imagery \cite{cong2022satmae}, whereas CROMA combines radar and optical observations through contrastive and masked objectives \cite{fuller2023croma}. Large-scale systems such as SatlasPretrain, RemoteCLIP, SkySense, AnySat, and RobSense further demonstrate the value of remote-sensing-specific, multimodal, and multiresolution representations \cite{bastani2023satlaspretrain,liu2024remoteclip,guo2024skysense,astruc2025anysat,do2025robsense}. GEO-Bench provides a standardized framework for comparing such representations across Earth-observation tasks \cite{lacoste2023geobench}, while change-aware geographic sampling shows that the composition of pretraining data itself can materially influence representation quality \cite{mall2023caco}. In-domain self-supervised learning has similarly been reported to outperform generic initialization on downstream remote-sensing tasks \cite{dimitrovski2024indomainssl}.
+
+These results motivate transfer learning in the present study, but they also reveal a methodological challenge: stronger pretrained representations can improve average classification performance without necessarily eliminating source-specific shortcuts or unseen-domain degradation.
+
+\subsection{Domain Shift in Remote Sensing}
+
+Domain shift occurs when the statistical properties of deployment data differ from those observed during training. In remote sensing, such differences can arise from sensor type, altitude, ground-sampling distance, atmospheric conditions, season, geography, illumination, preprocessing, or source-specific collection procedures. Recent surveys identify domain adaptation and domain generalization as increasingly important for operational Earth-observation systems \cite{peng2022dasurvey,zhou2023dgsurvey,liao2026dgsurvey}.
+
+Domain adaptation typically assumes some access to the target domain. Classical approaches such as domain-adversarial neural networks and Deep CORAL align source and target representations using adversarial learning or feature statistics \cite{ganin2016dann,sun2016deepcoral}. Remote-sensing-specific adaptation has similarly improved cross-dataset scene classification when unlabeled target images are available \cite{liu2020adabdc}, and LoveDA provides a geographic adaptation benchmark based on urban and rural distribution differences \cite{wang2021loveda}. However, this assumption is often unrealistic when the deployment domain is unknown in advance.
+
+Domain generalization instead requires learning only from available source domains and evaluating on unseen domains. MLDG formalized this objective through simulated train/test domain shifts during meta-learning \cite{li2018mldg}. DomainBed later demonstrated that rigorous model selection and strong empirical risk minimization (ERM) baselines are critical because sophisticated DG algorithms do not consistently dominate ERM across benchmarks \cite{gulrajani2021domainbed}. This observation is especially important for small or moderately sized remote-sensing studies, where a single favorable split or random seed can create an exaggerated impression of robustness.
+
+The broader machine-learning literature reaches a similar conclusion. WILDS formalizes naturally occurring distribution shifts across real applications and demonstrates substantial in-distribution to out-of-distribution performance gaps despite the use of contemporary robustness methods \cite{koh2021wilds}. This provides an important methodological precedent for evaluating models on naturally shifted domains rather than relying exclusively on synthetic perturbations or random partitions.
+
+
+Remote-sensing research has increasingly adopted explicit cross-domain protocols. MRSSC provides a dedicated cross-domain scene-classification benchmark \cite{liu2022mrssc}; geographically structured evaluations have examined satellite classification under spatial domain shift \cite{alemadi2025dsg}; and RWDS evaluates remote-sensing models under realistic geographic, climatic, and disaster-related distribution shifts \cite{alemadi2025rwds}. Cross-dataset testing between established scene benchmarks likewise shows that high within-dataset accuracy can decline when the evaluation dataset changes \cite{nafiiyah2026convnextcross}. Other recent approaches address multisource collaboration, feature alignment, open-set generalization, category alignment, representation invariance, and source-robust learning \cite{han2024mscdg,zhu2024fcan,zheng2024openset,li2024categoryalign,yang2024geira,kuriyal2025codex,qi2025srdgnet}. Geographic transfer studies additionally show that local fine-tuning may improve accuracy while leaving residual uncertainty and systematic errors under geographic shift \cite{hossain2026trustworthy}.
+
+The distinction between domain adaptation and domain generalization is central to this work. Our source-disjoint evaluation does not assume access to held-out source images during training. Furthermore, because source, acquisition characteristics, and class composition are partially entangled in the collected dataset, the resulting evaluation should be interpreted as a composite source-distribution shift rather than a controlled causal test of UAV versus satellite modality alone.
+
+\subsection{Robustness, Augmentation, and Domain-Generalization Methods}
+
+A common strategy for improving generalization is to increase the diversity of the training distribution through augmentation. CutMix mixes spatial regions and associated labels \cite{yun2019cutmix}, while AugMix constructs stochastic augmentation chains and consistency objectives to improve corruption robustness and uncertainty \cite{hendrycks2020augmix}. Remote-sensing-specific studies have similarly reported benefits from carefully selected geometric augmentation \cite{alharbi2023qss}. Nevertheless, robustness to synthetic corruption or geometric perturbation is not equivalent to robustness to semantic source shift. Augmentation can only help when the generated variability approximates relevant changes without destroying task-critical information.
+
+Several DG methods attempt to alter the learned representation rather than only the input distribution. MixStyle perturbs feature statistics to simulate style-domain variation \cite{zhou2021mixstyle}, whereas Representation Self-Challenging (RSC) suppresses dominant predictive features during training to encourage alternative evidence \cite{huang2020rsc}. SWAD seeks flatter solutions through dense stochastic weight averaging \cite{cha2021swad}, and Fishr encourages invariance of gradient statistics across source domains \cite{rame2022fishr}. These methods provide useful conceptual mechanisms for reducing reliance on domain-specific cues, but benchmark evidence also cautions against assuming that a DG algorithm must outperform ERM \cite{gulrajani2021domainbed}.
+
+For this reason, robustness claims should account for stochastic training variation. A method that improves one random seed but degrades others may not represent a reproducible gain. The present study therefore evaluates ERM, augmentation-based DG, and RSC across multiple seeds on a fixed source-disjoint protocol rather than selecting conclusions from a single favorable run.
+
+Predictive confidence provides an additional dimension of robustness. Modern neural networks can be substantially miscalibrated \cite{guo2017calibration}, and predictive uncertainty can degrade under dataset shift even when in-distribution confidence appears reasonable \cite{ovadia2019uncertainty}. Deep ensembles provide a strong practical uncertainty baseline \cite{lakshminarayanan2017ensembles}, while newer remote-sensing work explores conformal prediction and explicit out-of-distribution detection \cite{schweden2026conformal,zhou2026sarood}. These studies reinforce the broader principle that high softmax confidence should not be interpreted as evidence that an image belongs to the training distribution.
+
+Recent remote-sensing work additionally investigates uncertainty under cross-domain recognition settings, including uncertainty-aware classification designed for previously unseen remote-sensing conditions \cite{ning2026uncertainty}. Such work complements accuracy-based evaluation by emphasizing whether confidence remains meaningful when the deployment distribution changes.
+
+
+\subsection{Explainability and Contextual Shortcuts}
+
+Model interpretation is particularly important when remote-sensing systems are deployed in safety- or disaster-related settings. Grad-CAM remains one of the most widely used techniques for visualizing class-discriminative regions in convolutional networks \cite{selvaraju2017gradcam}. However, visual explanations require careful interpretation. Deep networks may exploit predictive shortcuts that correlate with a label without representing the intended semantic concept \cite{geirhos2020shortcut}. A model trained to recognize flooding, for example, may learn to associate particular road textures, vegetation patterns, water appearance, camera geometry, or source-specific artifacts with the Flooded class.
+
+Recent remote-sensing XAI research emphasizes precisely this problem. Systematic reviews identify increasing use of saliency methods but also note substantial variation in how explanations are validated \cite{hohl2024xaireview}. Explainable scene-classification methods attempt to make learned representations more transparent \cite{gu2026explainablemultiview}, while recent analyses distinguish visually plausible explanations from explanations that are scientifically valid with respect to the spatial, spectral, temporal, and physical structure of Earth-observation data \cite{dritsas2026validity}. Consequently, Grad-CAM should be viewed as qualitative evidence of model attention rather than causal proof of why a prediction occurred.
+
+This distinction motivates combining visual explanations with independent semantic evidence. Rather than interpreting a heatmap in isolation, the present work compares systematic failure cohorts with FloodNet semantic masks and statistically examines whether particular scene elements occur more frequently in consensus failures than in consensus-correct cases. This does not establish causality, but it provides a stronger basis for identifying plausible contextual shortcuts than saliency visualization alone.
+
+\subsection{Research Gap and Positioning of This Work}
+
+The literature establishes several mature components of the problem: high-performing remote-sensing scene classifiers, large aerial and satellite benchmarks, transfer learning, UAV disaster recognition, flood segmentation, domain adaptation, domain generalization, and visual explanation. However, these components are often evaluated independently.
+
+First, many remote-sensing classification studies emphasize random within-dataset partitions, which are valuable for measuring interpolation but can underestimate degradation caused by unseen acquisition sources. Second, several cross-domain methods assume access to target-domain data and therefore address domain adaptation rather than deployment to an unknown source. Third, flood and disaster studies frequently formulate the problem as segmentation, change detection, or damage assessment within a particular sensor or event family, whereas comparatively less attention is given to scene-level climate recognition across heterogeneous aerial sources. Fourth, explainability is often reported qualitatively without connecting recurring external errors to independent semantic annotations. Finally, domain-generalization results can be sensitive to model selection and stochastic optimization, making multi-seed comparison important before claiming improvement over ERM.
+
+This study is positioned at the intersection of these gaps. We reconstruct per-image source provenance for a heterogeneous three-class climate-scene dataset and compare conventional mixed evaluation with multiple source-disjoint protocols. A custom CNN is contrasted with ImageNet-pretrained MobileNetV2 to quantify the difference between learning from scratch and transfer learning. The most challenging source-disjoint setting is then used for multi-seed comparisons of ERM, conservative augmentation, MixStyle, and RSC rather than relying on a single training run. Generalization is further examined on the independent FloodNet UAV dataset without renormalizing away the unsupported Desert output, preserving the model's complete three-class behavior. Finally, representative Grad-CAM explanations are complemented by a post-hoc semantic-mask analysis of consensus external failures to investigate possible contextual shortcuts.
+
+Accordingly, the objective is not to claim that one DG method universally solves domain shift. Instead, the study asks a more fundamental question: how much performance is hidden by conventional random evaluation, what kinds of errors persist under unseen-source and external testing, and what evidence can be used to explain those failures without overstating causal conclusions.
