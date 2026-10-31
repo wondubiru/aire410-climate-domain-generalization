@@ -1,0 +1,5 @@
+file,sha256,bytes,batch,batch_paper_count,total_matrix_count,doi_bearing_count,intentional_no_doi_count,global_doi_pass_count,structural_error_count,warning_count
+paper/literature/literature_matrix.csv,30dfccef1ce32dae836774c544f74d649c66b4e7300528418c81ee9e6babf4e5,81334,5,19,100,88,12,88,0,0
+paper/literature/Batch_05_Final_Methodological_Anchors.md,e81f46992efc9187b1abc30582b6834ec16fc09fb4504e14c69d0e1c52594573,20530,5,19,100,88,12,88,0,0
+paper/literature/Global_100_DOI_Metadata_Audit.csv,4cbc0bda1afc223d9a0fbe67a78989ab3f2502dc810a562615b768d555462f87,24477,5,19,100,88,12,88,0,0
+paper/literature/Global_100_Metadata_Audit.md,9ffe81888d025251f5b244e697a109711253d9720402c2e3b78418fc5e5e9c86,1431,5,19,100,88,12,88,0,0
